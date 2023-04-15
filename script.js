@@ -1,6 +1,10 @@
 /**
  * Debug
  */
+
+// const debugSphere = new THREE.Mesh(new THREE.BoxGeometry(0.4,0.4,0.4), new THREE.MeshBasicMaterial({color:"white"}))
+// debugSphere.position.set(1, 0, 0)
+// debugSphere.add(new THREE.AxisHelper(1))
 const gui = new dat.GUI({ closed: true, width: 350 });
 
 const parameters = {
@@ -11,40 +15,68 @@ const parameters = {
   randomness: 0.5,
   randomnessPower: 6,
   insideColor: "#ec5300",
-  outsideColor: "#2fb4fc"
+  outsideColor: "#2fb4fc",
 };
-
 
 // 3D models
 const gltfLoader = new THREE.GLTFLoader();
-gltfLoader.load("./ForCompaniiesSphere.gltf", (model)=>{
-    console.log(model)
-    model.scene.scale.set(0.5,0.5,0.5)
-    models.push(model.scene)
-})
+gltfLoader.load("./ForCompaniiesSphere.gltf", (model) => {
+  console.log(model);
+  model.scene.scale.set(0.5, 0.5, 0.5);
+  models.push(model.scene);
+});
 
 const models = [
-  
-      new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), new THREE.MeshBasicMaterial({
-        color: "blue"
-      })),
-      new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), new THREE.MeshBasicMaterial({
-        color: "blue"
-      })),
-      new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), new THREE.MeshBasicMaterial({
-        color: "blue"
-      })),
-      new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), new THREE.MeshBasicMaterial({
-        color: "blue"
-      })),
-      new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), new THREE.MeshBasicMaterial({
-        color: "blue"
-      })),
-      
-    
-  
-  
+  new THREE.Mesh(
+    new THREE.SphereGeometry(0.5, 16, 16),
+    new THREE.MeshBasicMaterial({
+      color: "blue",
+    })
+  ),
+  new THREE.Mesh(
+    new THREE.SphereGeometry(0.5, 16, 16),
+    new THREE.MeshBasicMaterial({
+      color: "blue",
+    })
+  ),
+  new THREE.Mesh(
+    new THREE.SphereGeometry(0.5, 16, 16),
+    new THREE.MeshBasicMaterial({
+      color: "blue",
+    })
+  ),
+  new THREE.Mesh(
+    new THREE.SphereGeometry(0.5, 16, 16),
+    new THREE.MeshBasicMaterial({
+      color: "blue",
+    })
+  ),
+  new THREE.Mesh(
+    new THREE.SphereGeometry(0.5, 16, 16),
+    new THREE.MeshBasicMaterial({
+      color: "blue",
+    })
+  ),
+];
+
+const helpers =[
+  new THREE.AxisHelper(1.5),
+  new THREE.AxisHelper(1.5),
+  new THREE.AxisHelper(1.5),
+  new THREE.AxisHelper(1.5),
+  new THREE.AxisHelper(1.5),
+  new THREE.AxisHelper(1.5),
 ]
+
+//PARAMETERS
+
+
+for(let i = 0;i<models.length;i++){
+  models[i].add(helpers[i])
+}
+
+const distanceOfCamera = 4.5;
+let selectedModel;
 /**
  * Base
  */
@@ -54,6 +86,7 @@ const canvas = document.querySelector("canvas.webgl");
 // Scene
 const scene = new THREE.Scene();
 
+// scene.add(debugSphere)
 // TextureLoader
 const textureLoader = new THREE.TextureLoader();
 const starTexture = textureLoader.load(
@@ -84,12 +117,12 @@ const generateGalaxy = () => {
   }
 
   var hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x000000, 1);
-scene.add(hemisphereLight);
+  scene.add(hemisphereLight);
 
   /**
    * Geometry
    */
-  geometry = new THREE.BufferGeometry();
+  geometry = new THREE.BufferGeometry(); 
 
   const positions = new Float32Array(parameters.count * 3);
   const colors = new Float32Array(parameters.count * 3);
@@ -167,8 +200,8 @@ scene.add(hemisphereLight);
       uSize: { value: 30 * renderer.getPixelRatio() },
       uHoleSize: { value: 0.15 },
       uTexture: { value: starTexture },
-      size: { value: 1.0 }
-    }
+      size: { value: 1.0 },
+    },
   });
 
   /**
@@ -227,7 +260,7 @@ gui
  */
 const sizes = {
   width: window.innerWidth,
-  height: window.innerHeight
+  height: window.innerHeight,
 };
 
 window.addEventListener("resize", () => {
@@ -254,31 +287,32 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.x = 3;
-camera.position.y = 3;
-camera.position.z = 3;
-camera.lookAt(new THREE.Vector3(0,0,0))
-scene.add(camera);
+
+camera.position.x = distanceOfCamera;
+camera.position.y = distanceOfCamera *0.4;
+camera.position.z = distanceOfCamera;
+
+const cameraPointer = new THREE.Object3D();
+cameraPointer.add(new THREE.AxisHelper(1))
+scene.add(cameraPointer)
 
 // Groups
 let group = new THREE.Group();
 
 scene.add(group);
 
-setTimeout(()=>{
- 
-for (var i = 0; i < models.length; i++) {
+setTimeout(() => {
+  for (var i = 0; i < models.length; i++) {
     //  console.log("models")
-      models[i].position.set(
-        Math.cos((i / 5) * 2 * Math.PI) * 3,
-    
-        0,
-        Math.sin((i / 5) * 2 * Math.PI) * 3
-      );
-      group.add(models[i]);
-    }
-}, 2000)
+    models[i].position.set(
+      Math.cos((i / 5) * 2 * Math.PI) * 3,
 
+      0,
+      Math.sin((i / 5) * 2 * Math.PI) * 3
+    );
+    group.add(models[i]);
+  }
+}, 2000);
 
 // Controls
 const controls = new THREE.OrbitControls(camera, canvas);
@@ -286,7 +320,6 @@ controls.enableDamping = true;
 
 // controls for planet selection
 const raycaster = new THREE.Raycaster();
-
 document.addEventListener("click", function (e) {
   let pointer = {};
   //first we cast a ray and check intersected objects
@@ -296,19 +329,24 @@ document.addEventListener("click", function (e) {
   console.log(pointer.x, pointer.y);
 
   raycaster.setFromCamera(pointer, camera);
-  const intersects = raycaster.intersectObjects(models,false);
-  console.log(intersects[0].object);
-  // camera.lookAt(intersects.position)
-  console.log(camera.position)
-  // intersects[0].object.add(camera)
-  // camera.lookAt(intersects[0].object.position)
-  console.log(camera.position)
+  const intersects = raycaster.intersectObjects(models, false);
+  if(intersects.length){
+
+    console.log(camera.position);  
+    intersects[0].object.add(debugSphere)
+    intersects[0].object.add(cameraPointer)
+    selectedModel = intersects[0].object
+    // selectedModel.add(cameraPointer)
+    console.error(cameraPointer.position)
+    
+    console.log(camera.position);
+  }
 });
 /**
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
-  canvas: canvas
+  canvas: canvas,
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -343,10 +381,12 @@ const tick = () => {
 
   material.uniforms.uTime.value = elapsedTime;
 
-  camera.lookAt(models[4].position)
-  models[4].add(camera)
+
 
   // Update controls
+  // selectedModel ? cameraPointer.position.set(selectedModel.position.x, selectedModel.position.y, selectedModel.position.z) : cameraPointer.position.set(0,0,0)
+  selectedModel ? controls.target.set(cameraPointer.getWorldPosition().x, cameraPointer.getWorldPosition().y, cameraPointer.getWorldPosition().z) : controls.target.set(0,0,0)  
+  
   controls.update();
 
   // Render
@@ -354,7 +394,7 @@ const tick = () => {
 
   group.rotation.y -= 0.001;
 
-  for(let i=0;i<models.length;i++){
+  for (let i = 0; i < models.length; i++) {
     models[i].rotation.y -= 0.002;
   }
 
