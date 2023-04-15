@@ -333,7 +333,7 @@ document.addEventListener("click", function (e) {
   if(intersects.length){
 
     console.log(camera.position);  
-    intersects[0].object.add(debugSphere)
+    // intersects[0].object.add(debugSphere)
     intersects[0].object.add(cameraPointer)
     selectedModel = intersects[0].object
     // selectedModel.add(cameraPointer)
