@@ -18,6 +18,7 @@ const parameters = {
   outsideColor: "#2fb4fc",
 };
 
+
 // 3D models
 const gltfLoader = new THREE.GLTFLoader();
 gltfLoader.load("./ForCompaniiesSphere.gltf", (model) => {
@@ -80,6 +81,8 @@ for(let i = 0;i<models.length;i++){
 
 const distanceOfCamera = 4.5;
 let selectedModel;
+let selectedModelPosition = new THREE.Vector3(0,0,0);
+let rotateGalaxy = true;
 /**
  * Base
  */
@@ -295,6 +298,12 @@ camera.position.x = distanceOfCamera;
 camera.position.y = distanceOfCamera *0.4;
 camera.position.z = distanceOfCamera;
 
+// create the GSAP timeline
+const timeline = gsap.timeline();
+
+// animate the camera position over 3 seconds
+
+
 const cameraPointer = new THREE.Object3D();
 cameraPointer.add(new THREE.AxisHelper(1))
 scene.add(cameraPointer)
@@ -340,11 +349,14 @@ document.addEventListener("click", function (e) {
     
     
     controls.enabled = false;
-    intersects[0].object.add(cameraPointer)
+    // intersects[0].object.add(cameraPointer)
     selectedModel = intersects[0].object
+  rotateGalaxy = false;
+ selectedModel.getWorldPosition(target = selectedModelPosition)
+//  selectedModel.position.y = 3;
+    timeline.to(camera.position, { duration: 2, x:selectedModelPosition.x, y:selectedModelPosition.y, z:selectedModelPosition.z });
     // selectedModel.add(cameraPointer)
     console.error(cameraPointer.position)
-    selectedModel.position.y = 3;
     console.log(camera.position);
   }
 });
@@ -399,7 +411,7 @@ const tick = () => {
   // Render
   renderer.render(scene, camera);
 
-  group.rotation.y -= 0.001;
+  group.rotation.y -= rotateGalaxy? 0.001:0;
 
   for (let i = 0; i < models.length; i++) {
     models[i].rotation.y -= 0.002;
