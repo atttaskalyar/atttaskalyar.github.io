@@ -23,14 +23,17 @@ const gltfLoader = new THREE.GLTFLoader();
 gltfLoader.load("./ForCompaniiesSphere.gltf", (model) => {
   console.log(model);
   model.scene.scale.set(0.5, 0.5, 0.5);
-  models.push(model.scene);
+  models[0].add(model.scene);
+  models[0].isVisible = false;
 });
 
 const models = [
   new THREE.Mesh(
-    new THREE.SphereGeometry(0.5, 16, 16),
+    new THREE.SphereGeometry(1, 16, 16),
     new THREE.MeshBasicMaterial({
-      color: "blue",
+      color: "#ffffff",
+      transparent:true,
+      opacity:0
     })
   ),
   new THREE.Mesh(
@@ -317,6 +320,9 @@ setTimeout(() => {
 // Controls
 const controls = new THREE.OrbitControls(camera, canvas);
 controls.enableDamping = true;
+controls.enablePan = false;
+controls.maxDistance = 8;
+controls.minDistance = 6;
 
 // controls for planet selection
 const raycaster = new THREE.Raycaster();
@@ -327,18 +333,18 @@ document.addEventListener("click", function (e) {
   pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
   //perhaps we can apply a filter to the raycast
   console.log(pointer.x, pointer.y);
-
+  
   raycaster.setFromCamera(pointer, camera);
   const intersects = raycaster.intersectObjects(models, false);
   if(intersects.length){
-
-    console.log(camera.position);  
-    // intersects[0].object.add(debugSphere)
+    
+    
+    controls.enabled = false;
     intersects[0].object.add(cameraPointer)
     selectedModel = intersects[0].object
     // selectedModel.add(cameraPointer)
     console.error(cameraPointer.position)
-    
+    selectedModel.position.y = 3;
     console.log(camera.position);
   }
 });
@@ -386,8 +392,9 @@ const tick = () => {
   // Update controls
   // selectedModel ? cameraPointer.position.set(selectedModel.position.x, selectedModel.position.y, selectedModel.position.z) : cameraPointer.position.set(0,0,0)
   selectedModel ? controls.target.set(cameraPointer.getWorldPosition().x, cameraPointer.getWorldPosition().y, cameraPointer.getWorldPosition().z) : controls.target.set(0,0,0)  
-  
+  // selectedModel ?selectedModel.add(camera):
   controls.update();
+
 
   // Render
   renderer.render(scene, camera);
