@@ -64,12 +64,12 @@ const models = [
 ];
 
 const helpers =[
-  new THREE.AxisHelper(1.5),
-  new THREE.AxisHelper(1.5),
-  new THREE.AxisHelper(1.5),
-  new THREE.AxisHelper(1.5),
-  new THREE.AxisHelper(1.5),
-  new THREE.AxisHelper(1.5),
+  new THREE.AxisHelper(0),
+  new THREE.AxisHelper(0),
+  new THREE.AxisHelper(0),
+  new THREE.AxisHelper(0),
+  new THREE.AxisHelper(0),
+  new THREE.AxisHelper(0),
 ]
 
 //PARAMETERS
@@ -305,7 +305,7 @@ const timeline = gsap.timeline();
 
 
 const cameraPointer = new THREE.Object3D();
-cameraPointer.add(new THREE.AxisHelper(1))
+// cameraPointer.add(new THREE.AxisHelper(1))
 scene.add(cameraPointer)
 
 // Groups
@@ -365,6 +365,7 @@ document.addEventListener("click", function (e) {
  */
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
+  antialias:true,
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
