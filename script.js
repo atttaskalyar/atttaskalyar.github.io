@@ -5,7 +5,7 @@
 // const debugSphere = new THREE.Mesh(new THREE.BoxGeometry(0.4,0.4,0.4), new THREE.MeshBasicMaterial({color:"white"}))
 // debugSphere.position.set(1, 0, 0)
 // debugSphere.add(new THREE.AxisHelper(1))
-const gui = new dat.GUI({ closed: true, width: 350 });
+
 
 const parameters = {
   count: 125000,
@@ -115,81 +115,83 @@ let geometry = null;
 let material = null;
 let points = null;
 
+var hemisphereLight = new THREE.HemisphereLight(0xfbabff, 0x000000, 1);
+scene.add(hemisphereLight);
+
+let directionalLight = new THREE.DirectionalLight("yellow", 0.7)
 const generateGalaxy = () => {
   if (points !== null) {
     geometry.dispose();
     material.dispose();
     scene.remove(points);
   }
-
-  var hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x000000, 1);
-  scene.add(hemisphereLight);
+  
 
   /**
    * Geometry
    */
-  geometry = new THREE.BufferGeometry(); 
+  // geometry = new THREE.BufferGeometry(); 
 
-  const positions = new Float32Array(parameters.count * 3);
-  const colors = new Float32Array(parameters.count * 3);
-  const scales = new Float32Array(parameters.count);
-  const randomness = new Float32Array(parameters.count * 3);
-  const insideColor = new THREE.Color(parameters.insideColor);
-  const outsideColor = new THREE.Color(parameters.outsideColor);
+  // const positions = new Float32Array(parameters.count * 3);
+  // const colors = new Float32Array(parameters.count * 3);
+  // const scales = new Float32Array(parameters.count);
+  // const randomness = new Float32Array(parameters.count * 3);
+  // const insideColor = new THREE.Color(parameters.insideColor);
+  // const outsideColor = new THREE.Color(parameters.outsideColor);
 
-  for (let i = 0; i < parameters.count; i++) {
-    const i3 = i * 3;
+  // for (let i = 0; i < parameters.count; i++) {
+  //   const i3 = i * 3;
 
-    // Position
-    const radius = Math.random() * parameters.radius;
+  //   // Position
+  //   const radius = Math.random() * parameters.radius;
 
-    const branchAngle =
-      ((i % parameters.branches) / parameters.branches) * Math.PI * 2;
+  //   const branchAngle =
+  //     ((i % parameters.branches) / parameters.branches) * Math.PI * 2;
 
-    const randomX =
-      Math.pow(Math.random(), parameters.randomnessPower) *
-      (Math.random() < 0.5 ? 1 : -1) *
-      parameters.randomness *
-      radius;
-    const randomY =
-      Math.pow(Math.random(), parameters.randomnessPower) *
-      (Math.random() < 0.5 ? 1 : -1) *
-      parameters.randomness *
-      radius;
-    const randomZ =
-      Math.pow(Math.random(), parameters.randomnessPower) *
-      (Math.random() < 0.5 ? 1 : -1) *
-      parameters.randomness *
-      radius;
+  //   const randomX =
+  //     Math.pow(Math.random(), parameters.randomnessPower) *
+  //     (Math.random() < 0.5 ? 1 : -1) *
+  //     parameters.randomness *
+  //     radius;
+  //   const randomY =
+  //     Math.pow(Math.random(), parameters.randomnessPower) *
+  //     (Math.random() < 0.5 ? 1 : -1) *
+  //     parameters.randomness *
+  //     radius;
+  //   const randomZ =
+  //     Math.pow(Math.random(), parameters.randomnessPower) *
+  //     (Math.random() < 0.5 ? 1 : -1) *
+  //     parameters.randomness *
+  //     radius;
 
-    positions[i3] = Math.cos(branchAngle) * radius;
-    positions[i3 + 1] = 0;
-    positions[i3 + 2] = Math.sin(branchAngle) * radius;
+  //   positions[i3] = Math.cos(branchAngle) * radius;
+  //   positions[i3 + 1] = 0;
+  //   positions[i3 + 2] = Math.sin(branchAngle) * radius;
 
-    // Randomness
-    randomness[i3] = randomX;
-    randomness[i3 + 1] = randomY;
-    randomness[i3 + 2] = randomZ;
+  //   // Randomness
+  //   randomness[i3] = randomX;
+  //   randomness[i3 + 1] = randomY;
+  //   randomness[i3 + 2] = randomZ;
 
-    // Color
-    const mixedColor = insideColor.clone();
-    mixedColor.lerp(outsideColor, radius / parameters.radius);
+  //   // Color
+  //   const mixedColor = insideColor.clone();
+  //   mixedColor.lerp(outsideColor, radius / parameters.radius);
 
-    colors[i3] = mixedColor.r;
-    colors[i3 + 1] = mixedColor.g;
-    colors[i3 + 2] = mixedColor.b;
+  //   colors[i3] = mixedColor.r;
+  //   colors[i3 + 1] = mixedColor.g;
+  //   colors[i3 + 2] = mixedColor.b;
 
-    // Scales
-    scales[i] = Math.random();
-  }
+  //   // Scales
+  //   scales[i] = Math.random();
+  // }
 
-  geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-  geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
-  geometry.setAttribute("aScale", new THREE.BufferAttribute(scales, 1));
-  geometry.setAttribute(
-    "aRandomness",
-    new THREE.BufferAttribute(randomness, 3)
-  );
+  // geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  // geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+  // geometry.setAttribute("aScale", new THREE.BufferAttribute(scales, 1));
+  // geometry.setAttribute(
+  //   "aRandomness",
+  //   new THREE.BufferAttribute(randomness, 3)
+  // );
   // console.log(new THREE.)
   /**
    * Material
@@ -213,53 +215,9 @@ const generateGalaxy = () => {
   /**
    * Points
    */
-  points = new THREE.Points(geometry, material);
-  scene.add(points);
+  // points = new THREE.Points(geometry, material);
+  // scene.add(points);
 };
-
-gui
-  .add(parameters, "count")
-  .min(100)
-  .max(1000000)
-  .step(100)
-  .onFinishChange(generateGalaxy)
-  .name("Star count");
-gui
-  .add(parameters, "radius")
-  .min(0.01)
-  .max(20)
-  .step(0.01)
-  .onFinishChange(generateGalaxy)
-  .name("Galaxy radius");
-gui
-  .add(parameters, "branches")
-  .min(2)
-  .max(20)
-  .step(1)
-  .onFinishChange(generateGalaxy)
-  .name("Galaxy branches");
-gui
-  .add(parameters, "randomness")
-  .min(0)
-  .max(2)
-  .step(0.001)
-  .onFinishChange(generateGalaxy)
-  .name("Randomness position");
-gui
-  .add(parameters, "randomnessPower")
-  .min(1)
-  .max(10)
-  .step(0.001)
-  .onFinishChange(generateGalaxy)
-  .name("Randomness power");
-gui
-  .addColor(parameters, "insideColor")
-  .onFinishChange(generateGalaxy)
-  .name("Galaxy inside color");
-gui
-  .addColor(parameters, "outsideColor")
-  .onFinishChange(generateGalaxy)
-  .name("Galaxy outside color");
 
 /**
  * Sizes
@@ -295,7 +253,7 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 camera.position.x = distanceOfCamera;
-camera.position.y = distanceOfCamera *0.4;
+camera.position.y = distanceOfCamera *0.6;
 camera.position.z = distanceOfCamera;
 
 // create the GSAP timeline
@@ -328,6 +286,7 @@ setTimeout(() => {
 
 // Controls
 const controls = new THREE.OrbitControls(camera, canvas);
+controls.enabled = false;
 controls.enableDamping = true;
 controls.enablePan = false;
 controls.maxDistance = 8;
@@ -366,33 +325,15 @@ document.addEventListener("click", function (e) {
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
   antialias:true,
+  alpha: true
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 generateGalaxy();
 
-gui
-  .add(material.uniforms.uSize, "value")
-  .min(1)
-  .max(100)
-  .step(0.001)
-  .name("Point size")
-  .onChange(() => {
-    material.uniforms.uSize.value =
-      material.uniforms.uSize.value * renderer.getPixelRatio();
-  });
 
-gui
-  .add(material.uniforms.uHoleSize, "value")
-  .min(0)
-  .max(1)
-  .step(0.001)
-  .name("Black hole size");
-
-/**
- * Animate
- */
+ 
 const clock = new THREE.Clock();
 
 const tick = () => {
@@ -412,7 +353,7 @@ const tick = () => {
   // Render
   renderer.render(scene, camera);
 
-  group.rotation.y -= rotateGalaxy? 0.001:0;
+  // group.rotation.y -= rotateGalaxy? 0.001:0;
 
   for (let i = 0; i < models.length; i++) {
     models[i].rotation.y -= 0.002;
