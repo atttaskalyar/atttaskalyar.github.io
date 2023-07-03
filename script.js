@@ -24,6 +24,7 @@ const gltfLoader = new THREE.GLTFLoader();
 gltfLoader.load("./ForCompaniiesSphere.gltf", (model) => {
   console.log(model);
   model.scene.scale.set(0.5, 0.5, 0.5);
+  
   models[0].add(model.scene);
   models[0].isVisible = false;
 });
@@ -83,6 +84,8 @@ const distanceOfCamera = 4.5;
 let selectedModel;
 let selectedModelPosition = new THREE.Vector3(0,0,0);
 let rotateGalaxy = true;
+
+
 /**
  * Base
  */
@@ -118,7 +121,7 @@ let points = null;
 var hemisphereLight = new THREE.HemisphereLight(0xfbabff, 0x000000, 1);
 scene.add(hemisphereLight);
 
-let directionalLight = new THREE.DirectionalLight("yellow", 0.7)
+let directionalLight = new THREE.DirectionalLight("yellow", 2)
 const generateGalaxy = () => {
   if (points !== null) {
     geometry.dispose();
@@ -127,14 +130,6 @@ const generateGalaxy = () => {
   }
   
 
-  /**
-   * Geometry
-   */
-  // geometry = new THREE.BufferGeometry(); 
-
-  /**
-   * Material
-   */
   material = new THREE.ShaderMaterial({
     depthWrite: false,
     blending: THREE.AdditiveBlending,
@@ -180,6 +175,7 @@ window.addEventListener("resize", () => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
+
 /**
  * Camera
  */
@@ -194,6 +190,12 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.x = distanceOfCamera;
 camera.position.y = distanceOfCamera *0.6;
 camera.position.z = distanceOfCamera;
+
+const pointLight = new THREE.PointLight("#ffffff", 10);
+pointLight.intensity = 1;
+scene.add(pointLight)
+
+
 
 // create the GSAP timeline
 const timeline = gsap.timeline();
@@ -225,7 +227,7 @@ setTimeout(() => {
 
 // Controls
 const controls = new THREE.OrbitControls(camera, canvas);
-controls.enabled = false;
+controls.enabled = true;
 controls.enableDamping = true;
 controls.enablePan = false;
 controls.maxDistance = 8;
@@ -254,6 +256,9 @@ document.addEventListener("click", function (e) {
 //  selectedModel.position.y = 3;
     timeline.to(camera.position, { duration: 2, x:selectedModelPosition.x, y:selectedModelPosition.y, z:selectedModelPosition.z });
     // selectedModel.add(cameraPointer)
+    pointLight.position = selectedModel.position
+    // timeline.to(pointLight.position, { duration: 2, x:selectedModelPosition.x, y:selectedModelPosition.y, z:selectedModelPosition.z });
+    
     console.error(cameraPointer.position)
     console.log(camera.position);
   }
@@ -272,7 +277,47 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 generateGalaxy();
 
 
- 
+let isDragging = false;
+let previousMousePosition = {
+    x: 0,
+    y: 0
+};
+
+const toRadians = (angle) => {
+    return angle * (Math.PI / 180);
+};
+
+const renderArea = renderer.domElement;
+
+renderArea.addEventListener('mousedown', (e) => {
+    isDragging = true;
+});
+
+renderArea.addEventListener('mousemove', (e) => {
+    let deltaMove = {
+        x: e.offsetX - previousMousePosition.x,
+        y: e.offsetY - previousMousePosition.y
+    };
+
+    if (isDragging) {
+        let deltaRotationQuaternion = new THREE.Quaternion().setFromEuler(
+            new THREE.Euler(0, toRadians(deltaMove.x * 1), toRadians(-deltaMove.y * 1), 'XYZ')
+        );
+
+        selectedModel.quaternion.multiplyQuaternions(deltaRotationQuaternion, selectedModel.quaternion);
+    }
+
+    previousMousePosition = {
+        x: e.offsetX,
+        y: e.offsetY
+    };
+});
+
+document.addEventListener('mouseup', (e) => {
+    isDragging = false;
+});
+
+
 const clock = new THREE.Clock();
 
 const tick = () => {
@@ -295,7 +340,10 @@ const tick = () => {
   // group.rotation.y -= rotateGalaxy? 0.001:0;
 
   for (let i = 0; i < models.length; i++) {
-    models[i].rotation.y -= 0.002;
+    if(!selectedModel){
+
+      models[i].rotation.y -= 0.002;
+    }
   }
 
   // Call tick again on the next frame
